@@ -1,0 +1,4 @@
+<launch>
+	
+	<node name="image_converter" pkg="pedestrian" type="subimage.py" output="screen"/>
+</launch>
