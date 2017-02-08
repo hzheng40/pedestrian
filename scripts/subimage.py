@@ -3,6 +3,9 @@
 from __future__ import print_function
 import rospy
 import cv2
+from imutils.object_detection import non_max_suppression
+from imutils import paths
+import imutils
 import sys
 import numpy as np
 from sensor_msgs.msg import Image
@@ -13,16 +16,26 @@ class image_converter:
 	def __init__(self):
 		self.image_sub = rospy.Subscriber('/camera/rgb/image_color', Image, self.callback)
 		self.bridge = CvBridge()
-		self.flag_pub = rospy.Publisher('flag', String, queue_size=10)
+		self.image_pub = rospy.Publisher('results', Image, queue_size=10)
+		self.HOG = cv2.HOGDescriptor()
+		self.HOG.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
 
 	def callback(self, data):
 		try:
 			cv_image = self.bridge.imgmsg_to_cv2(data, 'bgr8')
 		except CvBridgeError as e:
 			print(e)
-		self.flag_pub.publish('hello')
-		cv2.imshow("image window", cv_image)
-		cv2.waitKey(0)
+		cv_image = imutils.resize(cv_image, width=min(400, cv_image.shape[1]))
+		(rects, weights) = self.HOG.detectMultiScale(cv_image, winStride=(4,4), padding=(8,8), scale=1.05)
+		rects = np.array([[x,y,x+w,y+h] for (x,y,w,h) in rects])
+		pick = non_max_suppression(rects, probs=None, overlapThresh=0.65)
+		for(xA, yA, xB, yB) in pick:
+			cv2.rectangle(cv_image, (xA,yA), (xB, yB), (0,255,0), 2)
+
+		#cv2.imshow("Before NMS", orig)
+		#cv2.imshow('After NMS', cv_image)
+		#cv2.waitKey(0)
+		self.image_pub.publish(self.bridge.cv2_to_imgmsg(cv_image, 'bgr8'))
 
 
 def main(args):
