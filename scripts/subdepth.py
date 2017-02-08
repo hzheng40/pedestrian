@@ -25,7 +25,9 @@ class depth_finder:
 
 	def callback(self, data):
 		# TODO: find the depth for the pedestrian found
+		
 
+		
 
 def main(args):
 	df = depth_finder()

@@ -5,11 +5,15 @@ import rospy
 import cv2
 from imutils.object_detection import non_max_suppression
 from imutils import paths
+import faster_nms
 import imutils
 import sys
 import numpy as np
 from sensor_msgs.msg import Image
-from std_msgs.msg import String
+# from std_msgs.msg import String
+# from std_msgs.msg import Float64MultiArray
+from std_msgs.msg import Header
+from geometry_msgs.msg import Pose, PoseArray
 from cv_bridge import CvBridge, CvBridgeError
 
 class image_converter:
@@ -18,6 +22,8 @@ class image_converter:
 		self.image_sub = rospy.Subscriber('/camera/rgb/image_color', Image, self.callback)
 		self.bridge = CvBridge()
 		self.image_pub = rospy.Publisher('results', Image, queue_size=10)
+		self.coord_pub = rospy.Publisher('coordinates', PoseArray, queue_size=10)
+		self.coordinates = PoseArray()
 
 		# using hog descriptor to detect human
 		self.HOG = cv2.HOGDescriptor()
@@ -44,9 +50,16 @@ class image_converter:
 		rects = np.array([[x,y,x+w,y+h] for (x,y,w,h) in rects])
 
 		# non max suppression
-		pick = non_max_suppression(rects, probs=None, overlapThresh=0.65)
+		pick = non_max_suppression_fast(rects, overlapThresh=0.65)
 		for(xA, yA, xB, yB) in pick:
 			cv2.rectangle(cv_image, (xA,yA), (xB, yB), (0,255,0), 2)
+		
+		# TODO: publish the coordinates
+		# if using PoseArray, length must be multiple of 4, each group is a rect
+		self.coord_pub.publish(pick)
+
+
+
 
 		#cv2.imshow("Before NMS", orig)
 		#cv2.imshow('After NMS', cv_image)
