@@ -40,8 +40,8 @@ class image_converter:
 
 		# for haar cascade
 		# TODO: finish detection with haar cascade
-		cv_gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
-		self.cascade.detectMultiScale(cv_gray)
+		# cv_gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
+		# self.cascade.detectMultiScale(cv_gray)
 
 		# for hog descriptor
 		# TODO: try different scales to find improved speed
@@ -50,6 +50,7 @@ class image_converter:
 		rects = np.array([[x,y,x+w,y+h] for (x,y,w,h) in rects])
 
 		# non max suppression
+		# TODO test this faster nms out
 		pick = non_max_suppression_fast(rects, overlapThresh=0.65)
 		for(xA, yA, xB, yB) in pick:
 			cv2.rectangle(cv_image, (xA,yA), (xB, yB), (0,255,0), 2)
