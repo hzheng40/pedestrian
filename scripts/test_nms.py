@@ -85,7 +85,7 @@ def main():
 		rects = np.array([[x,y,x+w,y+h] for (x,y,w,h) in rects])
 		# using fast nms or not
 		if use_fast_nms:
-			pick = non_max_suppression_fast(rects, overlapThresh=0.9)
+			pick = non_max_suppression_fast(rects, overlapThresh=0.65)
 		else:
 			pick = non_max_suppression(rects, overlapThresh=0.65)
 		for (xA, yA, xB, yB) in pick:
