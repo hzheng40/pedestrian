@@ -115,7 +115,7 @@ class image_converter:
 		# TODO: publish the coordinates
 		# if using PoseArray, length must be multiple of 4, each group is a rect
 		# self.coord_pub.publish(pick)
-
+		
 
 
 
