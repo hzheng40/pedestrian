@@ -40,6 +40,7 @@ class reinforcement:
 
 
 	def coord_callback(self, data):
+		
 
 
 	def getLegalAction(self, state):
