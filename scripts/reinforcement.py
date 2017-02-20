@@ -1,13 +1,37 @@
+from future import print_function
 import rospy
 import sys
-import sys
 import numpy as np 
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import Image, LaserScan
 from std_msgs.msg import String, Float64MultiArray, Header
-from geometry_msgs.msg import Pose, PoseArray, Point
+from geometry_msgs.msg import Pose, PoseArray, Point, Twist
+from nav_msgs.msg import OccupancyGrid
 
-# 
+class Configuration:
+	def __init__(self):
+		self.pos = None
+		self.direction = None
+		self.command_pub = rospy.Publisher('cmd_vel', Twist, queue_size=10)
 
+	def getPosition(self):
+		return self.pos
+
+	def getDirection(self):
+		return self.direction
+
+	def move(self, command):
+		# command should be in Twist
+		self.command_pub.publish(command)
+
+	def generateSuccessor(self, vector):
+		x, y = self.pos
+		dx, dy = vector
+		
+
+
+class Grid:
+	def __init__(self):
+		self.
 
 
 class reinforcement:
@@ -15,7 +39,6 @@ class reinforcement:
 		self.grids = []
 		self.policies = []
 		self.coord_pub = rospy.Subscriber('coord', PoseArray, coord_callback)
-		self.action_pub = rospy.Publisher('action', )
 		self.alpha = 0.1
 		self.decision = None
 		self.coord = Point()
