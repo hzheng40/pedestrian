@@ -5,7 +5,7 @@ import numpy as np
 from sensor_msgs.msg import Image, LaserScan
 from std_msgs.msg import String, Float64MultiArray, Header
 from geometry_msgs.msg import Pose, PoseArray, Point, Twist
-from nav_msgs.msg import OccupancyGrid
+from nav_msgs.msg import OccupancyGrid, MapMetaData
 
 class Configuration:
 	def __init__(self):
@@ -26,7 +26,7 @@ class Configuration:
 	def generateSuccessor(self, vector):
 		x, y = self.pos
 		dx, dy = vector
-		
+
 
 
 class Grid:
