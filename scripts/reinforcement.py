@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+
+
 from future import print_function
 import rospy
 import sys
@@ -6,6 +9,14 @@ from sensor_msgs.msg import Image, LaserScan
 from std_msgs.msg import String, Float64MultiArray, Header
 from geometry_msgs.msg import Pose, PoseArray, Point, Twist
 from nav_msgs.msg import OccupancyGrid, MapMetaData
+
+class Directions:
+	STOP = 'Stop'
+	LEFT = 'Left'
+	RIGHT = 'Right'
+	FORWARD = 'Forward'
+	
+
 
 class Configuration:
 	def __init__(self):
