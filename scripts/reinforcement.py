@@ -15,6 +15,8 @@ class Directions:
 	LEFT = 'Left'
 	RIGHT = 'Right'
 	FORWARD = 'Forward'
+	FORWARDL = 'ForwadL'
+	FORWARDR = 'ForwardR'
 	
 
 
