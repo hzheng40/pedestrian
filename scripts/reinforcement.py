@@ -17,14 +17,14 @@ class Directions:
 	FORWARD = 'Forward'
 	FORWARDL = 'ForwadL'
 	FORWARDR = 'ForwardR'
-	
+
 
 
 class Configuration:
 	def __init__(self):
 		self.pos = None
 		self.direction = None
-		self.command_pub = rospy.Publisher('cmd_vel', Twist, queue_size=10)
+		self.command_pub = rospy.Publisher('instruction', String, queue_size=10)
 
 	def getPosition(self):
 		return self.pos
@@ -33,7 +33,7 @@ class Configuration:
 		return self.direction
 
 	def move(self, command):
-		# command should be in Twist
+		# command should be in String commands
 		self.command_pub.publish(command)
 
 	def generateSuccessor(self, vector):
@@ -57,19 +57,7 @@ class reinforcement:
 		self.coord = Point()
 		self.legalActions = dict()
 
-		allD = ['F','B','L','R']
-		noF = ['B','L','R']
-		noB = ['F','L','R']
-		noL = ['F','B','R']
-		noR = ['F','B','L']
-		FB = ['F','B']
-		LR = ['L','R']
-		F = ['F']
-		B = ['B']
-		L = ['L']
-		R = ['R']
-
-		self.legalActions = {1: }
+		
 
 	def publishPolicy(self):
 		self.action_pub.publish(self.decision)

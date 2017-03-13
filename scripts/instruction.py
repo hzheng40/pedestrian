@@ -40,6 +40,7 @@ class Instruction:
 
 
 	def publish_vel(self, _angular, _linear):
+		# publishing the velocity command
 		vel = Twist()
 		vel.angular.z = _angular
 		vel.linear.x = _linear
