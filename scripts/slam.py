@@ -11,7 +11,7 @@ from nav_msgs.msg import MapMetaData, OccupancyGrid#!/usr/bin/env python
 class slam:
 	def __init__(self):
 		self.map_pub = rospy.Publisher('map', OccupancyGrid, queue_size=10)
-
+		self.
 
 
 
