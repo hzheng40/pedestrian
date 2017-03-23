@@ -9,7 +9,6 @@ from geometry_msgs.msg import Twist
 import sys, select, termios, tty
 
 import rosbag
-from std_msgs.msg import Int32, String
 from sensor_msgs.msg import Image
 
 class data_collectors:
