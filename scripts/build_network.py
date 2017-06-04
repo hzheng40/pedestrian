@@ -1,72 +1,54 @@
 from __future__ import division, print_function, absolute_import
 
 import tflearn
-from tflearn.data_utils import shuffle
 from tflearn.layers.core import input_data, dropout, fully_connected
 from tflearn.layers.conv import conv_2d, max_pool_2d
 from tflearn.layers.estimator import regression
-from tflearn.data_preprocessing import ImagePreprocessing
-from tflearn.data_augmentation import ImageAugmentation
-import pickle
+from tflearn.layers.normalization import local_response_normalization
 
 
 # Load the data set
-X, Y, X_test, Y_test = pickle.load(open("full_dataset.pkl", "rb"))
-
-# Shuffle the data
-X, Y = shuffle(X, Y)
-
-img_prep = ImagePreprocessing()
-img_prep.add_featurewise_zero_center()
-img_prep.add_featurewise_stdnorm()
+#TODO load images from training data
 
 
-# Create extra synthetic training data by flipping, rotating and blurring the
-# images on our data set.
-# img_aug = ImageAugmentation()
-# img_aug.add_random_flip_leftright()
-# img_aug.add_random_rotation(max_angle=25.)
-# img_aug.add_random_blur(sigma_max=3.)
-# will create error in this specific scenario
 
-
+#TODO resize images after importing
 
 # define the network structure
-# input is a 32x32 image rgb?
+# input is a 227 x 227 rgb
 
-network = input_data(shape=[None, 32, 32, 3],
-					 data_preprocessing=img_prep)
-# 1. convolution
-network = conv_2d(network, 32, 3, activation='relu')
+network = input_data(shape=[None, 227, 227, 3])
 
-# 2. max pooling
-network = max_pool_2d(network, 2)
-
-# 3. convolution again
-network = conv_2d(network, 64, 3, activation='relu')
-
-# 4. convolution again
-network = conv_2d(network, 64, 3, activation='relu')
-
-# 5. max pooling again
-network = max_pool_2d(network, 2)
-
-# 6. fully-connected 512 node neural network
-network = fully_connected(network, 512, activation='relu')
-
-# 7. dropout: prevent overfitting, is it really necessary? since we want to overfit? kinda?
+# building alexnet
+network = conv_2d(network, 96, 11, strides=4, activation='relu')
+network = max_pool_2d(network, 3, strides=2)
+network = local_response_normalization(network)
+network = conv_2d(network, 256, 5, activation='relu')
+network = max_pool_2d(network, 3, strides=2)
+network = local_response_normalization(network)
+network = conv_2d(network, 384, 3, activation='relu')
+network = conv_2d(network, 384, 3, activation='relu')
+network = conv_2d(network, 256, 3, activation='relu')
+network = max_pool_2d(network, 3, strides=2)
+network = local_response_normalization(network)
+network = fully_connected(network, 4096, activation='tanh')
 network = dropout(network, 0.5)
+network = fully_connected(network, 4096, activation='tanh')
+network = dropout(network, 0,5)
+network = fully_connected(network, 17, activation='softmax')
+network = regression(network, optimizer='momentum',
+					loss='categorical_crossentropy',
+					learning_rate=0.001)
 
-# 8. fully-connected nn with 6 outputs
-network = regression(network, optimizer='adam',loss='categorical_crossentropy', learning_rate=0.001)
 
-# wrap the network in a model object
-model = tflearn.DNN(network, tensorboard_verbose=0, checkpoint_path='bird-classifier.tfl.ckpt')
+# training the model
+model = tflearn.DNN(network, checkpoint_path='model_alexnet',
+					max_checkpoints=1, tensorboard_verbose=2)
+model.fit(X, Y, n_epoch=1000, validation_set=0.1, shuffle=True,
+				show_metric=True, batch_size=64, snapshot_step=200,
+				snapshot_epoch=False, run_id='alexnet_pedestrian')
 
-# training, 100 passes
-model.fit(X, Y, n_epoch=100, shuffle=True, validation_set=(X_test, Y_test),
-		  show_metric=True, batch_size=96, snapshot_epoch=True, run_id='bird-classifier')
 
-# save model when training is complete
-model.save('bird-classifier.tfl')
-print('Network trained and saved.')
+# saving the model
+model.save('alexnet_pedestrian.tfl')
+print('Network trained and saved')
