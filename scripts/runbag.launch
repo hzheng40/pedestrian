@@ -1,0 +1,3 @@
+<launch>
+	<node name="bagging_machine" pkg="pedestrian" type="data_collection.py" output="screen"/>
+</launch>
